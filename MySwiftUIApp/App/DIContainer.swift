@@ -55,6 +55,11 @@ class DIContainer {
         return SettingsViewModel(settingsUseCase: settingsUseCase)
     }
     
+    @MainActor
+    func makeSplashViewModel() -> SplashViewModel {
+        return SplashViewModel(diContainer: self)
+    }
+    
     // MARK: - Configuration Methods
     func setMockDataEnabled(_ enabled: Bool) {
         // Note: This would require reinitializing the use case
