@@ -12,65 +12,27 @@ struct UserDetailView: View {
     var body: some View {
         NavigationView {
             ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(spacing: 24) {
-                        // Header Section with scroll tracking
-                        HeaderView(
-                            displayName: viewModel.displayName,
-                            initials: viewModel.initials,
-                            backgroundColor: viewModel.backgroundColor
-                        )
-                        .background(
-                            GeometryReader { geometry in
-                                Color.clear
-                                    .preference(
-                                        key: ScrollOffsetPreferenceKey.self,
-                                        value: geometry.frame(in: .named("scroll")).minY
-                                    )
-                            }
-                        )
-                    
-                    // Contact Information
-                    VStack(alignment: .leading, spacing: 16) {
-                        SectionHeader(title: "Contact Information")
-                        
-                        ContactRow(
-                            icon: "envelope.fill",
-                            title: "Email",
-                            value: viewModel.displayEmail,
-                            action: { viewModel.sendEmail() }
-                        )
-                        
-                        ContactRow(
-                            icon: "phone.fill",
-                            title: "Phone",
-                            value: viewModel.displayPhone,
-                            action: { viewModel.callPhone() }
-                        )
-                        
-                        ContactRow(
-                            icon: "globe",
-                            title: "Website",
-                            value: viewModel.displayWebsite,
-                            action: { viewModel.openWebsite() }
-                        )
-                    }
-                    .padding(.horizontal)
-                    
-                    // Company Information
-                    VStack(alignment: .leading, spacing: 16) {
-                        SectionHeader(title: "Company")
-                        
-                        VStack(alignment: .leading, spacing: 12) {
-                            InfoRow(title: "Company Name", value: viewModel.displayCompanyName)
-                            InfoRow(title: "Catch Phrase", value: viewModel.displayCompanyCatchPhrase)
-                            InfoRow(title: "Business", value: viewModel.displayCompanyBusiness)
+                ScrollView {                VStack(spacing: 24) {
+                    // Header Section with scroll tracking
+                    HeaderView(
+                        displayName: viewModel.displayName,
+                        initials: viewModel.initials,
+                        backgroundColor: viewModel.backgroundColor
+                    )
+                    .background(
+                        GeometryReader { geometry in
+                            Color.clear
+                                .preference(
+                                    key: ScrollOffsetPreferenceKey.self,
+                                    value: geometry.frame(in: .named("scroll")).minY
+                                )
                         }
-                        .padding()
-                        .background(Color.theme.cardBackground)
-                        .cornerRadius(12)
+                    )
+                    
+                    // Dynamic Sections
+                    ForEach(viewModel.enhancedSections) { section in
+                        DetailSectionView(section: section)
                     }
-                    .padding(.horizontal)
                     
                     Spacer(minLength: 20)
                 }
@@ -155,56 +117,56 @@ struct SectionHeader: View {
 }
 
 struct ContactRow: View {
-    let icon: String
-    let title: String
-    let value: String
-    let action: () -> Void
+    let viewModel: ContactRowViewModel
     
     var body: some View {
-        Button(action: action) {
+        Button(action: viewModel.action) {
             HStack(spacing: 12) {
-                Image(systemName: icon)
+                Image(systemName: viewModel.icon)
                     .font(.system(size: 16))
-                    .foregroundColor(Color.theme.info)
+                    .foregroundColor(viewModel.iconColor)
                     .frame(width: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
+                    Text(viewModel.title)
                         .font(.caption)
                         .foregroundColor(Color.theme.secondaryText)
                     
-                    Text(value)
+                    Text(viewModel.value)
                         .font(.body)
                         .foregroundColor(Color.theme.primaryText)
                 }
                 
                 Spacer()
                 
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12))
-                    .foregroundColor(Color.theme.tertiaryText)
+                if viewModel.isActionable {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color.theme.tertiaryText)
+                }
             }
             .padding()
             .background(Color.theme.cardBackground)
             .cornerRadius(8)
         }
         .buttonStyle(PlainButtonStyle())
+        .disabled(!viewModel.isActionable)
     }
 }
 
 struct InfoRow: View {
-    let title: String
-    let value: String
+    let viewModel: InfoRowViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title)
+            Text(viewModel.title)
                 .font(.caption)
-                .foregroundColor(Color.theme.secondaryText)
+                .foregroundColor(viewModel.titleColor)
             
-            Text(value)
+            Text(viewModel.displayValue)
                 .font(.body)
-                .foregroundColor(Color.theme.primaryText)
+                .foregroundColor(viewModel.valueColor)
+                .italic(viewModel.isValueEmpty)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -218,7 +180,7 @@ struct UserDetailView_Previews: PreviewProvider {
             name: "John Doe",
             email: "john.doe@example.com",
             phone: "+1 (555) 123-4567",
-            website: "johndoe.com",
+            website: "https://johndoe.com",
             company: UserEntity.Company(
                 name: "Tech Solutions Inc.",
                 catchPhrase: "Innovation at its finest",
@@ -226,8 +188,18 @@ struct UserDetailView_Previews: PreviewProvider {
             )
         )
         
-        NavigationView {
-            UserDetailView(user: sampleUser)
+        Group {
+            // Light mode preview
+            NavigationView {
+                UserDetailView(user: sampleUser)
+            }
+            .preferredColorScheme(.light)
+            
+            // Dark mode preview
+            NavigationView {
+                UserDetailView(user: sampleUser)
+            }
+            .preferredColorScheme(.dark)
         }
     }
 }
