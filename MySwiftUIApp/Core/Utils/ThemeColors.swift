@@ -31,6 +31,12 @@ struct ThemeColors {
     let buttonBackground = Color.blue
     let buttonForeground = Color.white
     let linkColor = Color.blue
+    
+    // MARK: - Tab Bar Colors
+    let tabBarBackground = Color(UIColor.systemBackground)
+    let tabBarSelectedItem = Color.accentColor
+    let tabBarUnselectedItem = Color.gray
+    let tabBarShadow = Color.black.opacity(0.1)
 }
 
 // MARK: - Theme-aware View Modifiers

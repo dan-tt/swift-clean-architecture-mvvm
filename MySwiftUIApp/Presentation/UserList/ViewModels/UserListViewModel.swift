@@ -4,6 +4,7 @@ import SwiftUI
 @MainActor
 class UserListViewModel: ObservableObject {
     @Published var users: [UserEntity] = []
+    @Published var userRowViewModels: [UserRowViewModel] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
     
@@ -19,8 +20,11 @@ class UserListViewModel: ObservableObject {
         
         do {
             users = try await fetchUsersUseCase.execute()
+            userRowViewModels = UserRowViewModel.from(users)
         } catch {
             errorMessage = error.localizedDescription
+            users = []
+            userRowViewModels = []
         }
         
         isLoading = false
@@ -28,5 +32,27 @@ class UserListViewModel: ObservableObject {
     
     func refreshUsers() async {
         await fetchUsers()
+    }
+    
+    // MARK: - Computed Properties
+    var hasUsers: Bool {
+        return !userRowViewModels.isEmpty
+    }
+    
+    var userCount: Int {
+        return userRowViewModels.count
+    }
+    
+    var isError: Bool {
+        return errorMessage != nil
+    }
+    
+    // MARK: - Helper Methods
+    func getUserRowViewModel(for id: Int) -> UserRowViewModel? {
+        return userRowViewModels.first { $0.id == id }
+    }
+    
+    func clearError() {
+        errorMessage = nil
     }
 }

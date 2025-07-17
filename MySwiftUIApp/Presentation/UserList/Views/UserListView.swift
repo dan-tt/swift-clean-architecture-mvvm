@@ -31,9 +31,12 @@ struct UserListView: View {
                     }
                     .padding()
                 } else {
-                    List(viewModel.users) { user in
-                        UserRowView(user: user)
+                    List(viewModel.userRowViewModels) { userRowViewModel in
+                        UserRowView(viewModel: userRowViewModel)
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
                     }
+                    .listStyle(PlainListStyle())
                 }
             }
             .navigationTitle("Users")
