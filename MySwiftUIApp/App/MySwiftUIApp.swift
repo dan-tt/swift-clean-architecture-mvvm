@@ -6,7 +6,7 @@ struct MySwiftUIApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationCoordinator()
                 .environmentObject(themeManager)
                 .preferredColorScheme(themeManager.colorScheme)
         }

@@ -1,5 +1,9 @@
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 extension Color {
     // MARK: - Theme Colors
     static let theme = ThemeColors()
@@ -33,7 +37,11 @@ struct ThemeColors {
     let linkColor = Color.blue
     
     // MARK: - Tab Bar Colors
+    #if canImport(UIKit)
     let tabBarBackground = Color(UIColor.systemBackground)
+    #else
+    let tabBarBackground = Color.primary
+    #endif
     let tabBarSelectedItem = Color.accentColor
     let tabBarUnselectedItem = Color.gray
     let tabBarShadow = Color.black.opacity(0.1)

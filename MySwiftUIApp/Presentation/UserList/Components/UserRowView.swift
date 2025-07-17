@@ -32,11 +32,6 @@ struct UserRowView: View {
             }
             
             Spacer()
-            
-            // Chevron indicator
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(Color.theme.tertiaryText)
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 4)

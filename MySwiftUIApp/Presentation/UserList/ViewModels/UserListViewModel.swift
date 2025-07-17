@@ -52,6 +52,10 @@ class UserListViewModel: ObservableObject {
         return userRowViewModels.first { $0.id == id }
     }
     
+    func getUserEntity(for id: Int) -> UserEntity? {
+        return users.first { $0.id == id }
+    }
+    
     func clearError() {
         errorMessage = nil
     }

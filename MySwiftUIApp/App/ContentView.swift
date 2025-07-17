@@ -1,34 +1,43 @@
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 struct ContentView: View {
     @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var router: NavigationRouter
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        TabView {
+        TabView(selection: $router.selectedTab) {
             HomeView()
                 .tabItem {
-                    Image(systemName: "house")
-                    Text("Home")
+                    Image(systemName: AppTab.home.iconName)
+                    Text(AppTab.home.rawValue)
                 }
+                .tag(AppTab.home)
             
             CounterView(viewModel: DIContainer.shared.makeCounterViewModel())
                 .tabItem {
-                    Image(systemName: "plus.circle")
-                    Text("Counter")
+                    Image(systemName: AppTab.counter.iconName)
+                    Text(AppTab.counter.rawValue)
                 }
+                .tag(AppTab.counter)
             
             UserListView(viewModel: DIContainer.shared.makeUserListViewModel())
                 .tabItem {
-                    Image(systemName: "person.3")
-                    Text("Users")
+                    Image(systemName: AppTab.users.iconName)
+                    Text(AppTab.users.rawValue)
                 }
+                .tag(AppTab.users)
             
             SettingsView(viewModel: DIContainer.shared.makeSettingsViewModel())
                 .tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
+                    Image(systemName: AppTab.settings.iconName)
+                    Text(AppTab.settings.rawValue)
                 }
+                .tag(AppTab.settings)
         }
         .environmentObject(themeManager)
         .preferredColorScheme(themeManager.colorScheme)
@@ -41,6 +50,7 @@ struct ContentView: View {
     }
     
     private func configureTabBarAppearance() {
+        #if canImport(UIKit)
         let appearance = UITabBarAppearance()
         
         if themeManager.isDarkMode {
@@ -91,12 +101,13 @@ struct ContentView: View {
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
+        #endif
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        NavigationCoordinator()
             .environmentObject(DIContainer.shared.themeManager)
     }
 }
