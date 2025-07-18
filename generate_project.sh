@@ -141,7 +141,7 @@ main() {
     
     # Ask for confirmation unless --force is used
     if [ "$1" != "--force" ] && [ "$1" != "--build" ]; then
-        echo "⚠️  This will regenerate the entire Xcode project."
+        echo "⚠️ This will regenerate the entire Xcode project."
         echo "💡 All manual changes to project settings will be lost."
         echo "📄 Project structure will be based on project.yml"
         echo ""
